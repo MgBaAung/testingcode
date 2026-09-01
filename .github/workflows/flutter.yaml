@@ -1,0 +1,39 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # ၁။ ကုဒ်များကို ဆာဗာပေါ် ဆွဲယူခြင်း
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # ၂။ Java SDK ကို ထည့်သွင်းခြင်း (Android APK Build လုပ်ရန် လိုအပ်သည်)
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    # ၃။ Flutter SDK ကို ထည့်သွင်းခြင်း
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.x' # လိုအပ်သော Flutter Version ကို ထည့်နိုင်သည်
+        channel: 'stable'
+        cache: true
+
+    # ၄။ လိုအပ်သော Packages များကို ရယူခြင်း
+    - name: Install dependencies
+      run: flutter pub get
+
+    # ၅။ Android APK ကို တည်ဆောက်ခြင်း (Debug ဗားရှင်း)
+    - name: Build Debug APK
+      run: flutter build apk --debug
